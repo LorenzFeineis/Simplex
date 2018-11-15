@@ -78,26 +78,28 @@ class Matrix(object):
                 row = zeros.copy()
                 row.insert(i,1)
                 identity.append(row)
-            I = Matrix(identity)
+            Inv = Matrix(identity)
+            neu = []
+            for i in range(self.rows()):
+                neu.append(self.arg[i].copy())
+            new = Matrix(neu)
             for i in range(self.columns()): # iteriert über die Spalten
                 j=i
-                while self.item(j,i) == 0:
+                while new.item(j+1,i+1) == 0:
                     j+=1
-                new = self.change(i,j) # Stellt sicher, dass der i-te Diagonaleintrag nicht verschwindet
-                Inv = I.change(i,j)
-                Inv = Inv.lkippung(i,i,Fraction(1,new.item(i,i)))
-                new = new.lkippung(i,i,Fraction(1,new.item(i,i))) # normiert den i-ten Diagonaleintrag
+                new = new.change(i+1,j+1) # Stellt sicher, dass der i-te Diagonaleintrag nicht verschwindet
+                Inv = Inv.change(i+1,j+1)
+                Inv = Inv.lkippung(i+1,i+1,Fraction(1,new.item(i+1,i+1)))
+                new = new.lkippung(i+1,i+1,Fraction(1,new.item(i+1,i+1))) # normiert den i-ten Diagonaleintrag
                 j=1
                 while j <= self.rows(): # vernichtet alle Einträge der i-ten Spalte
-                    if new.item(j,i)==0:
+                    if new.item(j,i+1)==0:
                         j+=1
-                    elif j==i:
+                    elif j==i+1:
                         j+=1
                     else:
-                        Inv = Inv.lkippung(j,i,new.item(j,i))
-                        Inv.show()
-                        print("----")
-                        new = new.lkippung(j,i,new.item(j,i))
+                        Inv = Inv.lkippung(j,i+1,-new.item(j,i+1))
+                        new = new.lkippung(j,i+1,-new.item(j,i+1))
                         j+=1
             return(Inv)
 
@@ -108,4 +110,5 @@ y = Matrix([[5,-1],[6,-4]])
 A = Matrix([[1,2,3,4],[4,5,6,4],[7,8,9,4]])
 B = Matrix([[1,2,3,4],[5,123,7,8],[9,10,11,12],[13,14,15,134]])
 
-z = x.inverse()
+
+B.times(B.inverse()).show()
